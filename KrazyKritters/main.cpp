@@ -70,7 +70,7 @@ bool FrameFunc() {
 		bombtimeout =  hge->Timer_GetTime() - bombtimeoutstart;
 
 		if(bombtimeout >= BOMB_TIMEOUT) {
-			bombvector.push_back(new Bomb(hge, bombtexture, hge->Timer_GetTime(), 5, player->GetX(), player->GetY(), player->GetAngle()));
+			bombvector.push_back(new Bomb(hge, bombtexture, hge->Timer_GetTime(), 5, player->GetX(), player->GetY(), 0.0f));
 			bombtimeoutstart = hge->Timer_GetTime();
 		}
 	}
