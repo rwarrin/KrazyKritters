@@ -64,6 +64,13 @@ void Bomb::Update() {
 				}
 			}
 
+			if(temp->GetAIType() == PREDATOR_IMMUNE) {
+				if(distance <= temp->GetTextureWidth() / 1.5) {
+					temp->DealDamageToEntity(1000);
+					living_ = false;
+				}
+			}
+
 			if(temp->GetAIType() == BOSS) {
 				if(distance <= temp->GetTextureWidth() / 1.7) {
 					temp->DealDamageToEntity(1000);

@@ -46,6 +46,7 @@ void Enemy::AI() {
 			MoveWave(300, topSpeed_, 10, 30);
 		break;
 	case BOSS:
+	case PREDATOR_IMMUNE:
 	case PREDATOR:  // Predator AI
 		distance_ = sqrt(pow(theplayer->GetX() - x_, 2) + pow(theplayer->GetY() - y_, 2));
 
@@ -67,6 +68,7 @@ void Enemy::AI() {
 			else
 				MoveWave(300, topSpeed_, ParameterTurn() * 0.1, 30);
 		}
+		break;
 	}
 
 	DetectCollisions();

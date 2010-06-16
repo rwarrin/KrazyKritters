@@ -21,6 +21,7 @@ HTEXTURE playertexture;
 HTEXTURE enemytexture1;
 HTEXTURE enemytexture2;
 HTEXTURE enemytexture3;
+HTEXTURE enemytexture4;
 HTEXTURE backgroundTexture1;
 HTEXTURE backgroundTexture2;
 HTEXTURE backgroundTexture3;
@@ -166,6 +167,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		enemytexture1 = hge->Texture_Load("enemy_04.png");
 		enemytexture2 = hge->Texture_Load("enemy_01.png");
 		enemytexture3 = hge->Texture_Load("enemy_03.png");
+		enemytexture4 = hge->Texture_Load("enemy_05.png");
 		playertexture = hge->Texture_Load("player.png");
 		tempboss = hge->Texture_Load("bossbug.png");
 		bombtexture = hge->Texture_Load("bomb.png");
@@ -177,6 +179,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ENEMYINFO eibasicenemy = {hge, player, enemytexture1, 2.0f, 10, WANDERER};
 		ENEMYINFO eibasicenemy2 = {hge, player, enemytexture3, 1.0f, 15, WANDERER};
 		ENEMYINFO eiadvancedenemy = {hge, player, enemytexture2, 1.7f, 1000, PREDATOR};
+		ENEMYINFO eiimmuneenemy = {hge, player, enemytexture4, 1.0f, 1000, PREDATOR_IMMUNE};
 		ENEMYINFO eiboss1 = {hge, player, tempboss, 1.0f, 6000, BOSS};
 
 		Level * levelmaker;
@@ -188,13 +191,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		levelmaker = new Level(hge, player, backgroundTexture2);
 		levelmaker->AddEnemyToLevel(eibasicenemy, 4);
-		levelmaker->AddEnemyToLevel(eiadvancedenemy, 2);
+		levelmaker->AddEnemyToLevel(eiadvancedenemy, 1);
+		levelmaker->AddEnemyToLevel(eiimmuneenemy, 2);
 		levels.push_back(levelmaker);
 
 		levelmaker = new Level(hge, player, backgroundTexture3);
 		levelmaker->AddEnemyToLevel(eibasicenemy, 10);
 		levelmaker->AddEnemyToLevel(eibasicenemy2, 3);
-		levelmaker->AddEnemyToLevel(eiadvancedenemy, 2);
+		levelmaker->AddEnemyToLevel(eiadvancedenemy, 1);
 		levels.push_back(levelmaker);
 
 		levelmaker = new Level(hge, player, backgroundTexture1);

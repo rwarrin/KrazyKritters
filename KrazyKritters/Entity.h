@@ -9,6 +9,7 @@
 enum AITYPE {
 	WANDERER = 0,
 	PREDATOR,
+	PREDATOR_IMMUNE,
 	BOSS
 };
 

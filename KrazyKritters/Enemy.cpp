@@ -71,7 +71,10 @@ void Enemy::Update() {
 			theplayer->AddToScore(25);
 		
 		if(aitype_ == PREDATOR)
-			theplayer->AddToScore(-10);
+			theplayer->AddToScore(10);
+
+		if(aitype_ == PREDATOR_IMMUNE)
+			theplayer->AddToScore(50);
 
 		if(aitype_ == BOSS)
 			theplayer->AddToScore(100);
