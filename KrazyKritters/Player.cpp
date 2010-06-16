@@ -114,11 +114,11 @@ void Player::Update() {
 			float distance = sqrt( pow((enemyX - x_), 2) + pow((enemyY - y_), 2) );
 
 			if(temp->GetAIType() == WANDERER) {
-				if(distance <= temp->GetTextureWidth() / 1.5) //45)
+				if(distance <= temp->GetTextureWidth() / 1.2) //45)
 					temp->DealDamageToEntity(5);
 			}
 			else if(temp->GetAIType() == PREDATOR) {
-				if(distance <= 30) {
+				if(distance <= temp->GetTextureWidth() / 1.5) {//30) {
 					temp->DealDamageToEntity(50);
 					if(temporaryimmunity_ <= 0)
 						hp_ = hp_ - 10;
@@ -128,7 +128,6 @@ void Player::Update() {
 			}
 			else {  // if(temp->GetAIType() == BOSS)
 				if(distance <= temp->GetTextureWidth() / 1.5) {
-					temp->DealDamageToEntity(50);
 					if(temporaryimmunity_ <= 0)
 						hp_ = hp_ - 20;
 
@@ -138,7 +137,7 @@ void Player::Update() {
 		}
 	}  // For
 	if(temporaryimmunity_ > 0)
-		temporaryimmunity_ --;
+		temporaryimmunity_--;
 }
 
 void Player::SetHGEInterface(HGE * hge) {

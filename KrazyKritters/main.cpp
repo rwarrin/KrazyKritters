@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Level.h"
+#include "Bomb.h"
 
 #include <hge.h>
 #include <hgesprite.h>
@@ -24,11 +25,18 @@ HTEXTURE backgroundTexture1;
 HTEXTURE backgroundTexture2;
 HTEXTURE backgroundTexture3;
 HTEXTURE tempboss;
+HTEXTURE bombtexture;
 
 hgeFont * hFont;
 
 Level * currentlevel;
 std::vector<Level *> levels;
+
+std::vector<Entity *> bombvector;
+
+const int BOMB_TIMEOUT = 1.55;
+int bombtimeout = 0;
+int bombtimeoutstart = 0;
 
 Level * ChangeLevel(std::vector<Level *> * levels) {
 	Level * temp = NULL;
@@ -58,10 +66,29 @@ bool FrameFunc() {
 		currentlevel->InitializeLevel();
 	}
 
+	if(hge->Input_GetKeyState(HGEK_LBUTTON)) {
+		bombtimeout =  hge->Timer_GetTime() - bombtimeoutstart;
+
+		if(bombtimeout >= BOMB_TIMEOUT) {
+			bombvector.push_back(new Bomb(hge, bombtexture, hge->Timer_GetTime(), 5, player->GetX(), player->GetY(), player->GetAngle()));
+			bombtimeoutstart = hge->Timer_GetTime();
+		}
+	}
+
 	enemies = currentlevel->GetEnemyVector();
 
 	player->SetEnemyVector(enemies);
 	player->Update();  // Get Input and Move the player
+
+	std::vector<Entity *>::iterator bombiterator;
+	for(bombiterator = bombvector.begin(); bombiterator != bombvector.end(); bombiterator++) {
+		Entity * temp = *bombiterator;
+
+		if(temp->GetLivingStatus() == true) {
+			temp->SetEnemyVector(enemies);
+			temp->Update();
+		}
+	}
 
 	std::vector<Entity *>::iterator iter;
 	for(iter = enemies->begin(); iter != enemies->end(); iter++) {
@@ -81,6 +108,14 @@ bool RenderFunc() {
 	hge->Gfx_Clear(0x000000);
 
 	currentlevel->GetBackgroundSprite()->RenderEx(0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+
+	std::vector<Entity *>::iterator bombiterator;
+	for(bombiterator = bombvector.begin(); bombiterator != bombvector.end(); bombiterator++) {
+		Entity * temp = *bombiterator;
+		if(temp->GetLivingStatus() == true) {
+			temp->GetSprite()->RenderEx(temp->GetX(), temp->GetY(), temp->GetAngle(), 1.0f, 1.0f);
+		}
+	}
 
 	std::vector<Entity *>::iterator iter;
 	for(iter = enemies->begin(); iter != enemies->end(); iter++) {
@@ -126,6 +161,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		enemytexture3 = hge->Texture_Load("enemy_03.png");
 		playertexture = hge->Texture_Load("player.png");
 		tempboss = hge->Texture_Load("bossbug.png");
+		bombtexture = hge->Texture_Load("bomb.png");
 
 		srand(hge->Timer_GetTime());
 
