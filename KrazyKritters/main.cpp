@@ -63,6 +63,13 @@ bool FrameFunc() {
 		if(currentlevel == temp)
 			return true;
 
+		std::vector<Entity *>::iterator iter;
+		for(iter = bombvector.begin(); iter != bombvector.end(); iter++) {
+			Entity * temp = *iter;
+			if(temp->GetLivingStatus() == true)
+				temp->SetLivingStatus(false);
+		}
+
 		currentlevel->InitializeLevel();
 	}
 
