@@ -128,10 +128,10 @@ void Player::Update() {
 			}
 			else if(temp->GetAIType() == PREDATOR_IMMUNE) {
 				if(distance <= temp->GetTextureWidth() / 1.5) {
-					if(temporaryimmunity_ <= 0) {
+					if(temporaryimmunity_ <= 0)
 						hp_ = hp_ - 15;
+
 						temporaryimmunity_ = 5;
-					}
 				}
             }
 			else {  // if(temp->GetAIType() == BOSS)
