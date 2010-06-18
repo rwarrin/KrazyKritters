@@ -22,6 +22,7 @@ public:
 
 	hgeSprite * GetBackgroundSprite();
 
+	int GetLevelCompleteByEvent();
 	bool GetLevelCompleteStatus();
 	void SetLevelCompleteStatus(bool complete);
 
@@ -49,6 +50,8 @@ private:
 
 	int numberofenemies_;
 	int numberofenemiestokill_;
+
+	int levelcompleteevent_;
 
 	void MakeBackgroundSprite();
 };

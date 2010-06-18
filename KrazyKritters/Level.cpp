@@ -4,6 +4,7 @@ Level::Level(HGE * hge, Entity * player) {
 	hge_ = hge;
 	playerentity_ = player;
 	levelcomplete_ = false;
+	levelcompleteevent_ = 0;
 }
 
 Level::Level(HGE * hge, Entity * player, HTEXTURE background, HTEXTURE enemytexture, int numberofenemies) {
@@ -14,6 +15,7 @@ Level::Level(HGE * hge, Entity * player, HTEXTURE background, HTEXTURE enemytext
 	numberofenemies_ = numberofenemies;
 	numberofenemiestokill_ = numberofenemies;
 	levelcomplete_ = false;
+	levelcompleteevent_ = 0;
 	backgroundsprite_ = new hgeSprite(backgroundtexture_, 0, 0, 800, 600);
 }
 
@@ -24,6 +26,7 @@ Level::Level(HGE * hge, Entity * player, HTEXTURE background) {
 	numberofenemies_ = 0;
 	numberofenemiestokill_ = 0;
 	levelcomplete_ = false;
+	levelcompleteevent_ = 0;
 	backgroundsprite_ = new hgeSprite(backgroundtexture_, 0, 0, 800, 600);
 }
 
@@ -91,9 +94,17 @@ void Level::Update() {
 
 	}
 
-	if(deadcount >= numberofenemiestokill_)
+	if(deadcount >= numberofenemiestokill_) {
 		levelcomplete_ = true;
+		levelcompleteevent_ = 1;
+	}
 
-	if(playerentity_->GetHP() <= 0)
+	if(playerentity_->GetHP() <= 0) {
 		levelcomplete_ = true;
+		levelcompleteevent_ = 2;
+	}
+}
+
+int Level::GetLevelCompleteByEvent() {
+	return levelcompleteevent_;
 }
