@@ -5,9 +5,6 @@
 #include "Bomb.h"
 #include "MenuItem.h"
 
-// MY GIT TEST
-// A SECOND EDIT 
-
 #include <hge.h>
 #include <hgesprite.h>
 #include <hgefont.h>
