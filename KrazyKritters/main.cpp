@@ -211,7 +211,7 @@ bool GameFrameFunc() {
 		hge->System_SetState(HGE_RENDERFUNC, PauseRenderFunc);
 	}
 
-	if(currentlevel->GetLevelCompleteStatus() == true) {
+	if(currentlevel->GetLevelCompleteStatus() == true && currentlevel->GetLevelCompleteByEvent() != 2) {
 		Level * temp = currentlevel;
 		currentlevel = ChangeLevel(&levels);
 
