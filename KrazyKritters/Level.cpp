@@ -116,26 +116,36 @@ void Level::SetLevelCompleteByEvent(int value) {
 void Level::ResetLevel() {
 	levelcomplete_ = false;
 	levelcompleteevent_ = 0;
+
 	playerentity_->AddToScore(playerentity_->GetScore() * -1);
+
+	numberofenemiestokill_ = 0;
+	numberofenemies_ = 0;
+
 	std::vector<Entity *>::iterator iter;
 	for(iter = enemyvector_.begin(); iter != enemyvector_.end(); iter++) {
 		Entity * temp = *iter;
+
+		numberofenemies_++;
+		if(temp->GetAIType() == WANDERER || temp->GetAIType() == BOSS)
+			numberofenemiestokill_;
+
 		temp->SetX(rand() % 800);
 		temp->SetY(rand() % 600);
-		if(temp->GetLivingStatus() == false) {
-			temp->SetLivingStatus(true);
-			if(temp->GetAIType() == WANDERER) {
-				temp->SetHP(10);
-			}
-			else if(temp->GetAIType() == PREDATOR) {
-				temp->SetHP(1000);
-			}
-			else if(temp->GetAIType() == PREDATOR_IMMUNE) {
-				temp->SetHP(1000);
-			}
-			else {  // if(temp->GetAIType() == BOSS) {
-				temp->SetHP(6000);
-			}
+
+		temp->SetLivingStatus(true);
+
+		if(temp->GetAIType() == WANDERER) {
+			temp->SetHP(10);
+		}
+		else if(temp->GetAIType() == PREDATOR) {
+			temp->SetHP(1000);
+		}
+		else if(temp->GetAIType() == PREDATOR_IMMUNE) {
+			temp->SetHP(1000);
+		}
+		else {  // if(temp->GetAIType() == BOSS) {
+			temp->SetHP(6000);
 		}
 	}
 }

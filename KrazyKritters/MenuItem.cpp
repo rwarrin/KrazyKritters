@@ -7,7 +7,7 @@ hgeGUIMenuItem::hgeGUIMenuItem(int _id, hgeFont * font, HEFFECT snd, float x, fl
 	title_ = title;
 	sound_ = snd;
 
-	color_.SetHWColor(0xFFFFFE060);
+	color_.SetHWColor(0xFFFFFFF06);
 	shadow_.SetHWColor(0x300000000);
 	offset_ = 0.0f;
 

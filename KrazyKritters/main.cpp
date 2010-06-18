@@ -78,9 +78,6 @@ bool CongratulationsRenderFunc();
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge = hgeCreate(HGE_VERSION);
 
-	/*hge->System_SetState(HGE_FRAMEFUNC, GameFrameFunc);
-	hge->System_SetState(HGE_RENDERFUNC, GameRenderFunc);*/
-
 	hge->System_SetState(HGE_FRAMEFUNC, MainMenuFrameFunc);
 	hge->System_SetState(HGE_RENDERFUNC, MainMenuRenderFunc);
 
@@ -150,9 +147,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Level * levelmaker;
 
+		// This is not the first level it is only here to make the levels load
+		// properly.  The next level is the first level, you'll never see this
+		// level.
 		levelmaker = new Level(hge, player, backgroundTexture1);
-		levelmaker->AddEnemyToLevel(eibasicenemy, 4);
-		levelmaker->AddEnemyToLevel(eiimmuneenemy, 3);
+		levelmaker->AddEnemyToLevel(eiadvancedenemy, 1);
+		levels.push_back(levelmaker);
+
+		levelmaker = new Level(hge, player, backgroundTexture1);
+		levelmaker->AddEnemyToLevel(eibasicenemy, 1);
 		levelmaker->AddEnemyToLevel(eiadvancedenemy, 1);
 		levels.push_back(levelmaker);
 
@@ -334,6 +337,7 @@ bool MainMenuFrameFunc() {
 			std::vector<Level *>::iterator iter;
 			for(iter = levels.begin(); iter != levels.end(); iter++) {
 				Level * temp = *iter;
+				temp->InitializeLevel();
 				temp->ResetLevel();
 			}
 			currentlevel = ChangeLevel(&levels);
