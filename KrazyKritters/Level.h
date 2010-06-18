@@ -23,8 +23,11 @@ public:
 	hgeSprite * GetBackgroundSprite();
 
 	int GetLevelCompleteByEvent();
+	void SetLevelCompleteByEvent(int value);
 	bool GetLevelCompleteStatus();
 	void SetLevelCompleteStatus(bool complete);
+
+	void ResetLevel();
 
 	std::vector<Entity *> * GetEnemyVector();
 

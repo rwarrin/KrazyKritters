@@ -38,16 +38,19 @@ HTEXTURE mainmenuscreen;
 HTEXTURE gameoverscreen;
 HTEXTURE leveltransitionscreen;
 HTEXTURE pausescreen;
+HTEXTURE congratulationsscreen;
 
 hgeSprite * mainmenusprite;
 hgeSprite * gameoversprite;
 hgeSprite * leveltransitionsprite;
 hgeSprite * pausesprite;
+hgeSprite * congratulationssprite;
 
 hgeGUI * mainmenugui;
 hgeGUI * gameovergui;
 hgeGUI * leveltransitiongui;
 hgeGUI * pausegui;
+hgeGUI * congratulationsgui;
 
 Level * currentlevel;
 std::vector<Level *> levels;
@@ -69,6 +72,8 @@ bool LevelTransitionFrameFunc();
 bool LevelTransitionRenderFunc();
 bool PauseFrameFunc();
 bool PauseRenderFunc();
+bool CongratulationsFrameFunc();
+bool CongratulationsRenderFunc();
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hge = hgeCreate(HGE_VERSION);
@@ -108,18 +113,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		gameoverscreen = hge->Texture_Load("gameover.png");
 		leveltransitionscreen = hge->Texture_Load("levelcomplete.png");
 		pausescreen = hge->Texture_Load("pausescreen.png");
+		congratulationsscreen = hge->Texture_Load("congratulations.png");
 
 		mainmenusprite = new hgeSprite(mainmenuscreen, 0, 0, 800, 600);
 		gameoversprite = new hgeSprite(gameoverscreen, 0, 0, 800, 600);
 		leveltransitionsprite = new hgeSprite(leveltransitionscreen, 0, 0, 800, 600);
 		pausesprite = new hgeSprite(pausescreen, 0, 0, 800, 600);
+		congratulationssprite = new hgeSprite(congratulationsscreen, 0, 0, 800, 600);
 
 		mainmenugui = new hgeGUI();
-		mainmenugui->AddCtrl(new hgeGUIMenuItem(1, hFont, sound, 400, 200, "New Game or Continue"));
+		mainmenugui->AddCtrl(new hgeGUIMenuItem(1, hFont, sound, 400, 200, "New Game"));
 		mainmenugui->AddCtrl(new hgeGUIMenuItem(2, hFont, sound, 400, 250, "Exit Game"));
 
 		gameovergui = new hgeGUI();
-		gameovergui->AddCtrl(new hgeGUIMenuItem(1, hFont, sound, 400, 200, "Exit Game"));
+		gameovergui->AddCtrl(new hgeGUIMenuItem(1, hFont, sound, 400, 200, "Continue"));
 
 		leveltransitiongui = new hgeGUI();
 		leveltransitiongui->AddCtrl(new hgeGUIMenuItem(1, hFont, sound, 400, 200, "Start"));
@@ -127,6 +134,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		pausegui = new hgeGUI();
 		pausegui->AddCtrl(new hgeGUIMenuItem(1, hFont, sound, 400, 200, "Resume Game"));
 		pausegui->AddCtrl(new hgeGUIMenuItem(2, hFont, sound, 400, 250, "Quit Game"));
+
+		congratulationsgui = new hgeGUI();
+		congratulationsgui->AddCtrl(new hgeGUIMenuItem(1, hFont, sound, 400, 200, "Return to Main Menu"));
 
 		srand(hge->Timer_GetTime());
 
@@ -142,6 +152,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		levelmaker = new Level(hge, player, backgroundTexture1);
 		levelmaker->AddEnemyToLevel(eibasicenemy, 4);
+		levelmaker->AddEnemyToLevel(eiimmuneenemy, 3);
 		levelmaker->AddEnemyToLevel(eiadvancedenemy, 1);
 		levels.push_back(levelmaker);
 
@@ -204,8 +215,15 @@ bool GameFrameFunc() {
 		Level * temp = currentlevel;
 		currentlevel = ChangeLevel(&levels);
 
-		if(currentlevel == temp)
-			return true;
+		if(currentlevel == temp) {
+			//return true;
+			congratulationsgui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+			congratulationsgui->SetFocus(1);
+			congratulationsgui->Enter();
+			hge->System_SetState(HGE_FRAMEFUNC, CongratulationsFrameFunc);
+			hge->System_SetState(HGE_RENDERFUNC, CongratulationsRenderFunc);
+			return false;
+		}
 
 		std::vector<Entity *>::iterator iter;
 		for(iter = bombvector.begin(); iter != bombvector.end(); iter++) {
@@ -249,26 +267,7 @@ bool GameFrameFunc() {
 		}
 	}
 
-	currentlevel->Update();
-
-	/*// Check to see if the player is dead
-	if(player->GetHP() <= 0) {
-		gameovergui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
-		gameovergui->SetFocus(1);
-		gameovergui->Enter();
-		hge->System_SetState(HGE_FRAMEFUNC, GameOverFrameFunc);
-		hge->System_SetState(HGE_RENDERFUNC, GameOverRenderFunc);
-	}
-
-	// Level complete menu check here
-	if(currentlevel->GetLevelCompleteStatus() == true) {
-		//switch to menu
-		leveltransitiongui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
-		leveltransitiongui->SetFocus(1);
-		leveltransitiongui->Enter();
-		hge->System_SetState(HGE_FRAMEFUNC, LevelTransitionFrameFunc);
-		hge->System_SetState(HGE_RENDERFUNC, LevelTransitionRenderFunc);
-	}*/
+	//currentlevel->Update();
 
 	if(currentlevel->GetLevelCompleteByEvent() == 1) {  // Player killed all enemies
 		leveltransitiongui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
@@ -284,6 +283,8 @@ bool GameFrameFunc() {
 		hge->System_SetState(HGE_FRAMEFUNC, GameOverFrameFunc);
 		hge->System_SetState(HGE_RENDERFUNC, GameOverRenderFunc);
 	}
+	else
+		currentlevel->Update();
 
 	return false;
 }
@@ -329,10 +330,24 @@ bool MainMenuFrameFunc() {
 
 	if(id == -1) {
 		switch(lastid) {
-		case 1:
+		case 1: {
+			std::vector<Level *>::iterator iter;
+			for(iter = levels.begin(); iter != levels.end(); iter++) {
+				Level * temp = *iter;
+				temp->ResetLevel();
+			}
+			currentlevel = ChangeLevel(&levels);
+			player->SetHP(200.0f);
+			std::vector<Entity *>::iterator bombiter;
+			for(bombiter = bombvector.begin(); bombiter != bombvector.end(); bombiter++) {
+				Entity * temp = *bombiter;
+				if(temp->GetLivingStatus() == true)
+					temp->SetLivingStatus(false);
+			}
 			hge->System_SetState(HGE_FRAMEFUNC, GameFrameFunc);
 			hge->System_SetState(HGE_RENDERFUNC, GameRenderFunc);
 			break;
+			}
 		case 2:
 			return true;
 			break;
@@ -364,14 +379,14 @@ bool GameOverFrameFunc() {
 
 	if(id == -1) {
 		switch(lastid) {
-		case 1:
-			/*mainmenugui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+		case 1: {
+			mainmenugui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 			mainmenugui->SetFocus(1);
 			mainmenugui->Enter();
 			hge->System_SetState(HGE_FRAMEFUNC, MainMenuFrameFunc);
-			hge->System_SetState(HGE_RENDERFUNC, MainMenuRenderFunc);*/
-			return true;
+			hge->System_SetState(HGE_RENDERFUNC, MainMenuRenderFunc);
 			break;
+			}
 		}
 	}
 	else if(id) {
@@ -458,6 +473,41 @@ bool PauseRenderFunc() {
 	hge->Gfx_Clear(0x00000000);
 	pausesprite->RenderEx(0, 0, 0.0f, 1.0f, 1.0f);
 	pausegui->Render();
+	hge->Gfx_EndScene();
+	return false;
+}
+
+bool CongratulationsFrameFunc() {
+	int id;
+	static int lastid = 0;
+	float deltatime = hge->Timer_GetDelta();
+
+	id = congratulationsgui->Update(deltatime);
+
+	if(id == -1) {
+		switch(lastid) {
+		case 1:
+			mainmenugui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+			mainmenugui->SetFocus(1);
+			mainmenugui->Enter();
+			hge->System_SetState(HGE_FRAMEFUNC, MainMenuFrameFunc);
+			hge->System_SetState(HGE_RENDERFUNC, MainMenuRenderFunc);
+			break;
+		}
+	}
+	else if(id) {
+		lastid = id;
+		congratulationsgui->Leave();
+	}
+
+	return false;
+}
+
+bool CongratulationsRenderFunc() {
+	hge->Gfx_BeginScene();
+	hge->Gfx_Clear(0x00000000);
+	congratulationssprite->RenderEx(0, 0, 0.0f, 1.0f, 1.0f);
+	congratulationsgui->Render();
 	hge->Gfx_EndScene();
 	return false;
 }
