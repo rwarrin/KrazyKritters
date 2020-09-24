@@ -141,3 +141,5 @@ void Enemy::DetectCollisions() {
 		y_ = 631;
 	}
 }
+
+// End of file :)
