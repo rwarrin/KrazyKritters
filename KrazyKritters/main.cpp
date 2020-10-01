@@ -170,7 +170,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		levelmaker->AddEnemyToLevel(eibasicenemy2, 3);
 		levelmaker->AddEnemyToLevel(eiadvancedenemy, 1);
 		levels.push_back(levelmaker);
-
+		levelmaker = new Level(hge, player, backgroundTexture3);
+		levelmaker->AddEnemyToLevel(eibasicenemy2, 3);
+		levelmaker->AddEnemyToLevel(eibasicenemy, 10);
+		levels.push_back(levelmaker);
 		levelmaker = new Level(hge, player, backgroundTexture1);
 		levelmaker->AddEnemyToLevel(eiboss1, 1);
 		levels.push_back(levelmaker);
